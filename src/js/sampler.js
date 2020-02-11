@@ -1,5 +1,5 @@
 export function* poissonDiscSampler(width, height, radius) {
-    const k = 4; // maximum number of samples before rejection
+    const k = 30; // maximum number of samples before rejection
     const radius2 = radius * radius;
     const cellSize = radius * Math.SQRT1_2;
     const gridWidth = Math.ceil(width / cellSize);
