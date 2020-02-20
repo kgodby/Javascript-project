@@ -11,12 +11,12 @@
     "nodemon": "^2.0.2"
   },
   "devDependencies": {
-    "webpack": "^4.41.5",
+    "webpack": "^4.41.6",
     "webpack-cli": "^3.3.10"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --config webpack.config.js --watch"
+    "start": "webpack"
   },
   "author": "",
   "license": "ISC"

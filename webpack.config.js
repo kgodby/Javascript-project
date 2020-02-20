@@ -6,6 +6,8 @@ module.exports =  {
     output: {
         filename: "main.js",
         path: path.resolve(__dirname, "dist")
+    }, watchOptions: {
+        ignored: /node_modules/
     },
     resolve: {
         extensions: [".js"]

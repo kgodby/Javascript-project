@@ -1,4 +1,4 @@
-export function* poissonDiscSampler(width, height, radius) {
+ function* poissonDiscSampler(width, height, radius,p) {
     const k = 30; // maximum number of samples before rejection
     const radius2 = radius * radius;
     const cellSize = radius * Math.SQRT1_2;
@@ -7,9 +7,11 @@ export function* poissonDiscSampler(width, height, radius) {
     const grid = new Array(gridWidth * gridHeight);
     const queue = [];
 
-    // Pick the first sample.
-    yield { add: sample(width / 2 + Math.random() * radius, height / 2 + Math.random() * radius, null) };
-
+    if(p){
+        yield { add: sample(p[0], p[1], null) }
+    }else{
+        yield { add: sample(width / 2 + Math.random() * radius, height / 2 + Math.random() * radius, null) };
+    }
     // Pick a random existing sample from the queue.
     pick: while (queue.length) {
         const i = Math.random() * queue.length | 0;
@@ -65,3 +67,17 @@ export function* poissonDiscSampler(width, height, radius) {
         return s;
     }
 }
+
+export const sampler = function(width, height, radius, point){
+    const collection = [];
+
+    let p, s = poissonDiscSampler(width,height, radius, point);
+
+    while (p = s.next().value) {
+        if (p.add) {
+            collection.push(p.add)
+        }
+    }
+    return collection;
+}
+
