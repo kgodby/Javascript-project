@@ -3,6 +3,7 @@
 import {sampler} from './sampler'
 import {VoronoiDiagram} from './mesh'
 import {throttle} from '../util/throttle'
+import {debounce} from '../util/debounce'
 
 
 
@@ -11,15 +12,19 @@ import {throttle} from '../util/throttle'
     const canvas =  document.getElementById("sampleSpace")
     const ctx = canvas.getContext('2d')    
     const slider = document.getElementById('slider') 
-    let voronoi, i, imageData, p
+    const rate = document.getElementById('rate') 
+     let voronoi, i, imageData, p
     let r = slider.value
+    let s = rate.value
 
     const draw = function (imageData, voronoi, i) {
-        ctx.globalAlpha = 1;
         
-        for( let j = 0; j< 1000; j++){
+        ctx.globalAlpha = 1;
+        let rate = Math.floor((voronoi.mesh.circumcenters.length / 2)/s) + 1 
+        for( let j = 0; j< rate; j++){
            
             if(voronoi.mesh.cellPolygon(i)){
+                
                let color = voronoi.samplePolygonPixels(imageData, i)
                ctx.beginPath()
                voronoi.mesh.renderCell(i, ctx)
@@ -34,7 +39,7 @@ import {throttle} from '../util/throttle'
            } 
             
 
-        }
+        }           
              
             
         window.requestAnimationFrame(() => { draw(imageData, voronoi, i) })
@@ -65,7 +70,7 @@ import {throttle} from '../util/throttle'
             
             ctx.globalAlpha = 0.2;
             ctx.drawImage(this, 0, 0)
-            
+            ctx.save()
             
             imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         }   
@@ -75,16 +80,23 @@ import {throttle} from '../util/throttle'
                 r = event.target.value  
             )
 
+        rate.addEventListener('change', (event) =>
+                s = event.target.value
+            )
+
         const clickHandler = function(p){
             i = 0
+               
                 ctx.clearRect(0,0,canvas.width, canvas.height)
-                
+                ctx.putImageData(imageData, 0, 0)
                 voronoi = newSample(canvas, r,p)
                 window.requestAnimationFrame(() =>draw(imageData, voronoi, i));
             }
 
-        canvas.addEventListener('click', (e) =>
-            clickHandler(p = [e.clientX, e.clientY])
-        )
+        canvas.addEventListener('click', debounce((e) => {
+            
+            return clickHandler(p = [e.clientX, e.clientY]);
+        }, 500, true))
+
 
 
